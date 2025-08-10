@@ -59,6 +59,11 @@ return {
                         require("telescope.themes").get_dropdown(),
                     },
                 },
+                defaults = {
+                    layout_config = {
+                        prompt_position = "top",
+                    },
+                },
             })
 
             -- Enable Telescope extensions if they are installed

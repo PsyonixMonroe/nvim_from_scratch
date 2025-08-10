@@ -24,6 +24,7 @@ vim.keymap.set("n", "<c-Right>", ":vertical resize -2<CR>", { desc = "Resize Win
 vim.keymap.set("n", "<A-]>", ":bnext<CR>", { desc = "Next tab in tabline" })
 vim.keymap.set("n", "<A-[>", ":bprevious<CR>", { desc = "Prev tab in tabline" })
 vim.keymap.set("n", "<Leader>o", ":Neotree focus<CR>", { desc = "Focus on Neotree" })
+vim.keymap.set("n", "<Leader>c", ":bnext<CR>:bd#<CR>", { desc = "Close Buffer" })
 -- never really used these harpoon ones, but wanted the tabline ones back
 -- ["<A-]>"] = {
 --     function()
@@ -132,16 +133,17 @@ vim.keymap.set(
 )
 
 -- LSP
-vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Declaration of current symbol" })
-vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Declaration of current symbol" })
-vim.keymap.set("n", "gh", "<cmd>lua vim.lsp.buf.hover()<CR>", { desc = "Show Line Hover" })
-vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", { desc = "Go To Implementation" })
-vim.keymap.set("n", "gy", "<cmd>lua vim.lsp.buf.signature_help()<CR>", { desc = "Show Signature Help" })
-vim.keymap.set("n", "gc", "<cmd>lua vim.lsp.buf.code_action()<CR>", { desc = "Perform Code Action" })
-vim.keymap.set("n", "<Leader>ln", ":lua vim.diagnostic.goto_next()<CR>", { desc = "Go to next error" })
-vim.keymap.set("n", "<Leader>lN", ":lua vim.diagnostic.goto_prev()<CR>", { desc = "Go to prev error" })
-vim.keymap.set("n", "<Leader>lg", "<cmd>lua vim.lsp.buf.hover()<CR>", { desc = "Show Documentation" })
-vim.keymap.set("n", "<Leader>rt", "", { desc = "Run Test" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Declaration of current symbol" })
+vim.keymap.set("n", "gd", vim.lsp.buf.declaration, { desc = "Declaration of current symbol" })
+vim.keymap.set("n", "gh", vim.lsp.buf.hover, { desc = "Show Line Hover" })
+vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go To Implementation" })
+vim.keymap.set("n", "gy", vim.lsp.buf.signature_help, { desc = "Show Signature Help" })
+vim.keymap.set("n", "gc", vim.lsp.buf.code_action, { desc = "Perform Code Action" })
+vim.keymap.set("n", "<leader>lh", vim.diagnostic.open_float, { desc = "Go to next error" })
+vim.keymap.set("n", "<leader>ln", function() vim.diagnostic.jump({count=1}) end, { desc = "Go to next error" })
+vim.keymap.set("n", "<leader>lN", function() vim.diagnostic.jump({count=-1}) end, { desc = "Go to prev error" })
+vim.keymap.set("n", "<leader>lg", vim.lsp.buf.hover, { desc = "Show Documentation" })
+vim.keymap.set("n", "<leader>rt", "", { desc = "Run Test" })
 
 vim.keymap.set("n", "<Leader>lc", ":GoCmt<CR>", { desc = "Add stub GoDoc" })
 vim.keymap.set(

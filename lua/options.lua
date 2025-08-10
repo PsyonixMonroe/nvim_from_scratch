@@ -48,6 +48,7 @@ vim.o.expandtab = true
 
 -- visuals
 vim.o.winborder = "rounded"
+vim.o.showmode = false
 
 vim.g.markdown_fenced_languages = {
     "html",
