@@ -14,6 +14,11 @@ vim.o.mousemoveevent = true
 vim.o.swapfile = false
 vim.o.undofile = true
 vim.o.confirm = true
+vim.o.backup = false
+vim.o.writebackup = false
+vim.o.autoread = true
+vim.o.autowrite = true
+vim.o.encoding = "UTF-8"
 
 -- long lines
 vim.o.breakindent = true
@@ -23,8 +28,9 @@ vim.o.wrap = false
 -- Search
 vim.o.ignorecase = true
 vim.o.smartcase = true
-vim.o.smartindent = true
 vim.o.inccommand = "split"
+vim.o.hlsearch = true
+vim.o.incsearch = true
 
 -- splits
 vim.o.splitright = true
@@ -42,13 +48,18 @@ end)
 vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.sidescrolloff = 10
+-- vim.o.iskeyword:append("-")
+
+-- indents
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
 vim.o.expandtab = true
+vim.o.smartindent = true
 
 -- visuals
 vim.o.winborder = "rounded"
 vim.o.showmode = false
+vim.o.colorcolumn = "100"
 
 vim.g.markdown_fenced_languages = {
     "html",
