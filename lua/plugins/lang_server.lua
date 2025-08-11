@@ -31,6 +31,15 @@ return {
                 "ts_ls",
                 "yamlls",
                 "zls",
+            },
+            automatic_installation = true,
+            handlers = {
+                function(server_name)
+                    local capabilities = require("blink.cmp").get_lsp_capabilities()
+                    local server = {}
+                    server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+                    require("lspconfig")[server_name].setup(server)
+                end
             }
         }
     }
