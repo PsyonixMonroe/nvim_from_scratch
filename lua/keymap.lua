@@ -4,6 +4,10 @@ vim.keymap.set({ "n", "x" }, "<c-u>", "<C-d>zz", { desc = "Jump Half Page Down" 
 vim.keymap.set({ "n", "x" }, "n", "nzzzv", { desc = "Search Next" })
 vim.keymap.set({ "n", "x" }, "N", "Nzzzv", { desc = "Search Prev" })
 vim.keymap.set({ "n", "x" }, "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set({ "i" }, "<A-h>", "<Left>")
+vim.keymap.set({ "i" }, "<A-j>", "<Down>")
+vim.keymap.set({ "i" }, "<A-k>", "<Up>")
+vim.keymap.set({ "i" }, "<A-l>", "<Right>")
 
 -- Window Commands
 vim.keymap.set({ "n", "x" }, "<A-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
