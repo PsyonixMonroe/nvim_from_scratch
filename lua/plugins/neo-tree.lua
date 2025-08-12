@@ -29,7 +29,8 @@ return {
                     "*.umap"
                 },
                 always_show = {
-                    ".gitignore"
+                    ".gitignore",
+                    ".github"
                 },
             },
             window = {
