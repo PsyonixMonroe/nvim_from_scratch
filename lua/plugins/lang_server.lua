@@ -39,6 +39,7 @@ return {
                     local server = {}
                     server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
                     require("lspconfig")[server_name].setup(server)
+                    vim.diagnostic.config({ virtual_text = false, })
                 end
             }
         }
