@@ -41,13 +41,27 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
     pattern = { "*" },
-    group = vim.api.nvim_create_augroup("remove_crlf", { clear = true }),
+    -- group = vim.api.nvim_create_augroup("remove_crlf", { clear = true }),
+    group = augroup,
     desc = "Remove Windows Style Line endings",
     callback = function()
         -- print(vim.bo.buftype)
         vim.cmd(' \
             if !&readonly && !(&buftype == "nofile") && !(&buftype == "terminal") && !(&buftype == "quickfix") && !(&filetype == "harpoon") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) \
                 :%s/\r//ge \
+            endif \
+        ')
+    end,
+})
+
+vim.api.nvim_create_autocmd({ "FocusLost", "BufWinLeave" }, {
+    pattern = { "*" },
+    group = augroup,
+    desc = "Save buffer when leaving the buffer",
+    callback = function()
+        vim.cmd(' \
+            if !&readonly && !(&buftype == "nofile") && !(&buftype == "terminal") && !(&filetype == "harpoon") && !(&buftype == "quickfix") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) && filereadable(bufname("%")) \
+                :w! \
             endif \
         ')
     end,
