@@ -35,8 +35,22 @@ return {
                 -- python = { "isort", "black" },
                 --
                 -- You can use 'stop_after_first' to run the first available formatter from the list
-                -- javascript = { "prettierd", "prettier", stop_after_first = true },
+                javascript = { "prettierd", "prettier", "eslint", stop_after_first = true },
+                typescript = { "prettierd", "prettier", "eslint", stop_after_first = true },
             },
         },
     },
+    {
+        'windwp/nvim-ts-autotag',
+        opts = {
+            opts = {
+                enable_close_on_slash = false -- Auto close on trailing </
+            },
+            per_filetype = {
+                ["html"] = {
+                    enable_close = false
+                }
+            }
+        }
+    }
 }
