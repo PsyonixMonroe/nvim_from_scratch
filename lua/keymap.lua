@@ -3,9 +3,9 @@ vim.keymap.set({ "n", "x" }, "<c-i>", "<C-u>zz", { desc = "Jump Half Page Up" })
 vim.keymap.set({ "n", "x" }, "<c-u>", "<C-d>zz", { desc = "Jump Half Page Down" })
 vim.keymap.set({ "n", "x" }, "n", "nzzzv", { desc = "Search Next" })
 vim.keymap.set({ "n", "x" }, "N", "Nzzzv", { desc = "Search Prev" })
-vim.keymap.set({ "n", "x" }, "<Esc>", "<cmd>nohlsearch<CR>")
-vim.keymap.set({ "i" }, "<A-h>", "<Left>")
+-- vim.keymap.set({ "n", "x" }, "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set({ "i" }, "<A-j>", "<Down>")
+vim.keymap.set({ "i" }, "<A-h>", "<Left>")
 vim.keymap.set({ "i" }, "<A-k>", "<Up>")
 vim.keymap.set({ "i" }, "<A-l>", "<Right>")
 
@@ -137,15 +137,15 @@ vim.keymap.set(
 -- LSP
 -- WARN: This is not Goto Definition, this is Goto Declaration.
 --  For example, in C this would take you to the header.
-vim.keymap.set({ "n", "x" }, "<leader>lD", vim.lsp.buf.declaration, { desc = "Goto [D]eclaration" })
 vim.keymap.set({ "n", "x" }, "gD", vim.lsp.buf.declaration, { desc = "[G]oto [D]eclaration of current symbol" })
+vim.keymap.set({ "n", "x" }, "<leader>lD", vim.lsp.buf.declaration, { desc = "Goto [D]eclaration" })
 vim.keymap.set({ "n", "x" }, "gd", vim.lsp.buf.definition, { desc = "[G] [D]efinition of current symbol" })
+vim.keymap.set({ "n", "x" }, "<Leader>ld", vim.diagnostic.open_float, { desc = "Open Documenation" })
 vim.keymap.set({ "n", "x" }, "gh", vim.lsp.buf.hover, { desc = "Show Line [H]over" })
+vim.keymap.set({ "n", "x" }, "<Leader>lh", vim.lsp.buf.hover, { desc = "Show Diagnostics" })
 vim.keymap.set({ "n", "x" }, "gi", vim.lsp.buf.implementation, { desc = "Go To [I]mplementation" })
 vim.keymap.set({ "n", "x" }, "gy", vim.lsp.buf.signature_help, { desc = "Show Signature Help" })
-vim.keymap.set({ "n", "x" }, "gc", vim.lsp.buf.code_action, { desc = "Perform Code Action" })
-vim.keymap.set({ "n", "x" }, "<Leader>lh", vim.diagnostic.open_float, { desc = "Open Documenation" })
-vim.keymap.set({ "n", "x" }, "<Leader>lg", vim.lsp.buf.hover, { desc = "Show Diagnostics" })
+vim.keymap.set({ "n", "x" }, "ga", vim.lsp.buf.code_action, { desc = "Perform Code Action" })
 vim.keymap.set({ "n", "x" }, "<Leader>la", vim.lsp.buf.code_action, { desc = "Goto Code [A]ction" })
 vim.keymap.set({ "n", "x" }, "<Leader>ln", function() vim.diagnostic.jump({ count = 1 }) end,
     { desc = "Go to next error" })
