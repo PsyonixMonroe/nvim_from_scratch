@@ -1,3 +1,6 @@
+local tsbuiltin = require("telescope.builtin")
+local telescope = require("telescope")
+
 -- Move Commands
 vim.keymap.set({ "n", "x" }, "<c-i>", "<C-u>zz", { desc = "Jump Half Page Up" })
 vim.keymap.set({ "n", "x" }, "<c-u>", "<C-d>zz", { desc = "Jump Half Page Down" })
@@ -77,42 +80,42 @@ vim.keymap.set("v", "<Leader>x", "<cmd>:lua<CR>", { desc = "Execute Selection (l
 vim.keymap.set("n", "<Leader>fa", "<cmd>Telescope find_files<CR>", { desc = "Find All Files" })
 vim.keymap.set("n", "<Leader>ff", "<cmd>Telescope git_files<CR>", { desc = "Find Git Files" })
 vim.keymap.set("n", "<Leader>fd", function()
-    require("telescope.builtin").lsp_document_symbols({ search = vim.fn.input("Grep > ") })
+    tsbuiltin.lsp_document_symbols({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep for string in files" })
 vim.keymap.set("n", "<Leader>fs", function()
-    require("telescope.builtin").grep_string({ search = vim.fn.input("Grep > ") })
+    tsbuiltin.grep_string({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep for string in files" })
 
 -- Find references for the word under your cursor.
-vim.keymap.set({ "n", "x" }, "<leader>le", require("telescope.builtin").lsp_references, { desc = "Goto R[e]ferences" })
+vim.keymap.set({ "n", "x" }, "<leader>le", tsbuiltin.lsp_references, { desc = "Goto R[e]ferences" })
 
 -- Jump to the implementation of the word under your cursor.
 --  Useful when your language has ways of declaring types without an actual implementation.
-vim.keymap.set({ "n", "x" }, "<leader>li", require("telescope.builtin").lsp_implementations,
+vim.keymap.set({ "n", "x" }, "<leader>li", tsbuiltin.lsp_implementations,
     { desc = "Goto [I]mplementation" })
 
 -- Jump to the definition of the word under your cursor.
 --  This is where a variable was first declared, or where a function is defined, etc.
 --  To jump back, press <C-t>.
-vim.keymap.set({ "n", "x" }, "<leader>ld", require("telescope.builtin").lsp_definitions, { desc = "Goto [D]efinition" })
+vim.keymap.set({ "n", "x" }, "<leader>ld", tsbuiltin.lsp_definitions, { desc = "Goto [D]efinition" })
 
 -- Fuzzy find all the symbols in your current document.
 --  Symbols are things like variables, functions, types, etc.
-vim.keymap.set({ "n", "x" }, "<leader>ls", require("telescope.builtin").lsp_document_symbols,
+vim.keymap.set({ "n", "x" }, "<leader>ls", tsbuiltin.lsp_document_symbols,
     { desc = "Open Document [S]ymbols" })
 
 -- Fuzzy find all the symbols in your current workspace.
 --  Similar to document symbols, except searches over your entire project.
 vim.keymap.set({ "n", "x" },
     "<leader>lw",
-    require("telescope.builtin").lsp_dynamic_workspace_symbols,
+    tsbuiltin.lsp_dynamic_workspace_symbols,
     { desc = "Open [W]orkspace Symbols" }
 )
 
 -- Jump to the type of the word under your cursor.
 --  Useful when you're not sure what type a variable is and you want to see
 --  the definition of its *type*, not where it was *defined*.
-vim.keymap.set({ "n", "x" }, "<leader>lt", require("telescope.builtin").lsp_type_definitions,
+vim.keymap.set({ "n", "x" }, "<leader>lt", tsbuiltin.lsp_type_definitions,
     { desc = "[G]oto [T]ype Definition" })
 
 
@@ -154,7 +157,7 @@ vim.keymap.set({ "n", "x" }, "<Leader>lN", function() vim.diagnostic.jump({ coun
 -- Rename the variable under your cursor.
 --  Most Language Servers support renaming across files, etc.
 vim.keymap.set({ "n", "x" }, "<leader>lr", vim.lsp.buf.rename, { desc = "[R]ename" })
-vim.keymap.set({ "n", "x" }, "<leader>sn", require("telescope").extensions.notify.notify,
+vim.keymap.set({ "n", "x" }, "<leader>sn", telescope.extensions.notify.notify,
     { desc = "Search Notifications" })
 
 vim.keymap.set(
@@ -164,10 +167,6 @@ vim.keymap.set(
     { desc = "Go err block" }
 )
 vim.keymap.set({ "n", "x" }, "<Leader>rt", "", { desc = "Run Test" })
-
-
-
-
 
 -- old plugin commands
 -- vim.keymap.set("n", "<A-.>", ":ToggleTerm<CR>", { desc = "Run Terminal emulator" })
