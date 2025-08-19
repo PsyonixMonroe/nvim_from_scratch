@@ -11,7 +11,13 @@ local d = ls.dynamic_node
 local sn = ls.snippet_node
 
 return {
-    s("zig", { t(
-        "-- zig snippet"
-    ) })
+    s("func", {}),
+    s("for", {}),
+    s("while", {}),
+    s("if", {}),
+    s("switch", {}),
+    s("log", {}),
+    s("struct", {}),
+    s("class", {}),
+    s("test", {}),
 }

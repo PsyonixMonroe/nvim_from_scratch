@@ -12,7 +12,13 @@ local d = ls.dynamic_node
 local sn = ls.snippet_node
 
 return {
-    s("verse", { t(
-        "-- verse snippet"
-    ) })
+    s("func", {}),
+    s("for", {}),
+    s("while", {}),
+    s("if", {}),
+    s("switch", {}),
+    s("log", {}),
+    s("struct", {}),
+    s("class", {}),
+    s("test", {}),
 }

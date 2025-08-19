@@ -14,6 +14,14 @@ return {
             updateEvents = "TextChanged,TextChangedI",
 
             enable_autosnippets = true,
+
+            ext_opts = {
+                [types.choiceNode] = {
+                    active = {
+                        virt_text = { { "<-", "ERROR" } },
+                    },
+                },
+            },
         }
 
         vim.keymap.set({ "i", "s" }, "<A-n>", function()
@@ -28,7 +36,7 @@ return {
             end
         end, { silent = true, desc = "Snippet Previous" })
 
-        vim.keymap.set({ "i", "s" }, "<A-u>", function()
+        vim.keymap.set({ "i", "s" }, "<A-m>", function()
             if ls.choice_active() then
                 ls.change_choice(1)
             end
