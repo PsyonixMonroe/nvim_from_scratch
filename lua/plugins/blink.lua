@@ -2,11 +2,15 @@ return {
     {
         "saghen/blink.cmp",
         version = '1.*',
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+        },
         opts = {
             keymap = { preset = 'super-tab' },
             appearance = { nerd_font_variant = 'mono' },
+            snippets = { preset = 'luasnip' },
             completion = {
-                ghost_text = { enabled = true },
+                ghost_text = { enabled = false },
                 documentation = { auto_show = true },
                 menu = {
                     draw = {
@@ -29,6 +33,16 @@ return {
                                 return item.kind ~= require('blink.cmp.types').CompletionItemKind.Keyword
                             end, items)
                         end,
+                        score_offset = 10,
+                    },
+                    snippets = {
+                        score_offset = 3,
+                    },
+                    path = {
+                        score_offset = 2,
+                    },
+                    buffer = {
+                        score_offset = -10,
                     },
                 },
             },
