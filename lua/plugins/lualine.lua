@@ -9,22 +9,22 @@ end
 
 return {
     "nvim-lualine/lualine.nvim",
-    requires = {'nvim-tree/nvim-web-devicons', opt = true},
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
     opts = {
         extensions = { 'neo-tree', 'quickfix', 'mason' },
         theme = "codedark",
         options = {
             -- component_separators = { left = '', right = ''},
-            component_separators = { left = '|', right = '|'},
-            section_separators = { left = '', right = ''},
+            component_separators = { left = '|', right = '|' },
+            section_separators = { left = '', right = '' },
         },
         sections = {
-            lualine_a = {'mode'},
-            lualine_b = {'branch', 'diff', 'diagnostics'},
-            lualine_c = {'filename', 'searchcount' },
-            lualine_x = {'encoding', 'bo:filetype', tsstatus, {'lsp_status', icon='', symbols={ done='', separator=',' }}},
-            lualine_y = {'progress'},
-            lualine_z = {'location'},
+            lualine_a = { 'mode' },
+            lualine_b = { 'branch', 'diff', 'diagnostics' },
+            lualine_c = { 'filename', 'searchcount', },
+            lualine_x = { 'encoding', 'bo:filetype', tsstatus, { 'lsp_status', icon = '', symbols = { done = '', separator = ',' } } },
+            lualine_y = { 'progress' },
+            lualine_z = { 'location' },
         },
     },
 }

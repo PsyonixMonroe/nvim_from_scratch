@@ -79,5 +79,22 @@ return {
         sn(nil, fmt([[
 ---@param
 ]], {})),
-    }) }))
+    }) })),
+
+    s("plugin", fmt([[
+return {{
+    {{
+        "{}",
+        dependencies = {{
+
+        }},
+        opts = {{
+            {}
+        }},
+        config = function()
+            {}
+        end,
+    }}
+}}
+    ]], { i(1, "__plugin__"), i(2, "__opts__"), i(3, "__config__") })),
 }
