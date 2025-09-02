@@ -7,8 +7,8 @@ return {
     config = function()
         local dap = require('dap')
         local dapui = require('dapui')
+        -- setup layout
         dapui.setup({
-            -- disable repl and console
             layouts = { {
                 elements = { {
                     id = "scopes",
@@ -32,19 +32,19 @@ return {
             } },
         })
 
+        -- keybinds
         vim.keymap.set('n', "<Leader>d", "", { desc = "Debugger" })
         vim.keymap.set('n', "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
         vim.keymap.set('n', "<Leader>da", dap.clear_breakpoints, { desc = "Clear All Breakpoints" })
         vim.keymap.set('n', "<Leader>dq", dap.terminate, { desc = "Quit Session" })
         vim.keymap.set('n', "<Leader>dc", dap.continue, { desc = "Start Debugging" })
+        vim.keymap.set('n', "<Leader>dr", dap.run_to_cursor, { desc = "Run to Cursor" })
 
 
         vim.keymap.set('n', "<F9>", dap.continue, { desc = "Start Debugging" })
         vim.keymap.set('n', "<F8>", dap.step_over, { desc = "Step Over" })
         vim.keymap.set('n', "<F7>", dap.step_into, { desc = "Step Into" })
         vim.keymap.set('n', "<F6>", dap.step_out, { desc = "Step Out" })
-
-        vim.keymap.set({ 'v', 'n' }, "<Leader>dr", dapui.eval, { desc = "Run Selected Text" })
 
         -- Auto open/close DAP-UI
         dap.listeners.before.attach.dapui_config = function()
