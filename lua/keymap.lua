@@ -77,14 +77,24 @@ vim.keymap.set("n", "<Leader><Leader>x", "<cmd>source %<CR>", { desc = "Load Fil
 vim.keymap.set("v", "<Leader>x", "<cmd>:lua<CR>", { desc = "Execute Selection (lua)" })
 
 -- Telescope
-vim.keymap.set("n", "<Leader>fa", "<cmd>Telescope find_files<CR>", { desc = "Find All Files" })
-vim.keymap.set("n", "<Leader>ff", "<cmd>Telescope git_files<CR>", { desc = "Find Git Files" })
-vim.keymap.set("n", "<Leader>fd", function()
-    tsbuiltin.lsp_document_symbols({ search = vim.fn.input("Grep > ") })
-end, { desc = "Grep for string in files" })
+vim.keymap.set("n", "<Leader>fa", "<cmd>Telescope find_files<CR>", { desc = "[F]ind [A]ll Files" })
+vim.keymap.set("n", "<Leader>ff", "<cmd>Telescope git_files<CR>", { desc = "[F]ind Git [F]iles" })
+vim.keymap.set("n", "<Leader>fd", tsbuiltin.lsp_document_symbols, { desc = "Find [D]ocument symbols in Files" })
 vim.keymap.set("n", "<Leader>fs", function()
     tsbuiltin.grep_string({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep for string in files" })
+-- vim.keymap.set("n", "<leader>fs", tsbuiltin.live_grep, { desc = "[S]earch by Grep" })
+
+
+vim.keymap.set("n", "<leader>fh", tsbuiltin.help_tags, { desc = "Search [H]elp" })
+vim.keymap.set("n", "<leader>fk", tsbuiltin.keymaps, { desc = "Search [K]eymaps" })
+vim.keymap.set("n", "<leader>fw", tsbuiltin.grep_string, { desc = "Search current [W]ord" })
+vim.keymap.set("n", "<leader>fg", tsbuiltin.diagnostics, { desc = "Search Dia[g]nostics" })
+vim.keymap.set("n", "<leader>fr", tsbuiltin.resume, { desc = "Search [R]esume" })
+vim.keymap.set("n", "<leader>f.", tsbuiltin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
+
+vim.keymap.set("n", "<leader>ss", tsbuiltin.builtin, { desc = "[S]earch [S]elect Telescope" })
+
 
 -- Find references for the word under your cursor.
 vim.keymap.set({ "n", "x" }, "<leader>le", tsbuiltin.lsp_references, { desc = "Goto R[e]ferences" })

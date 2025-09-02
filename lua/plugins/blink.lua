@@ -6,11 +6,31 @@ return {
             "L3MON4D3/LuaSnip",
         },
         opts = {
-            keymap = { preset = 'super-tab' },
+            keymap = {
+                preset = 'enter',
+                ["<Tab>"] = {
+                    -- function(cmp)
+                    --     if cmp.visible() then
+                    --         return 'select_next'
+                    --     end
+                    -- end,
+                    'snippet_forward',
+                    'select_next',
+                    'fallback',
+                },
+                ["<S-Tab>"] = {
+                    'snippet_backward',
+                    'select_prev',
+                    'fallback',
+                },
+            },
             appearance = { nerd_font_variant = 'mono' },
             snippets = { preset = 'luasnip' },
             completion = {
                 ghost_text = { enabled = false },
+                list = {
+                    selection = { preselect = true, auto_insert = true },
+                },
                 documentation = { auto_show = true },
                 menu = {
                     draw = {
