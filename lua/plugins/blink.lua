@@ -29,7 +29,7 @@ return {
             completion = {
                 ghost_text = { enabled = false },
                 list = {
-                    selection = { preselect = true, auto_insert = true },
+                    selection = { preselect = false, auto_insert = true },
                 },
                 documentation = { auto_show = true },
                 menu = {
