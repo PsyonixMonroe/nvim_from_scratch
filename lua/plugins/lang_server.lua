@@ -25,7 +25,6 @@ return {
                 "lua_ls",
                 "phpactor",
                 "powershell_es",
-                "sqls",
                 "terraformls",
                 "tflint",
                 "ts_ls",

@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     callback = function()
         -- print(vim.bo.buftype)
         vim.cmd(' \
-            if !&readonly && !(&buftype == "nofile") && !(&buftype == "help") && !(&buftype == "terminal") && !(&buftype == "quickfix") && !(&filetype == "harpoon") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) \
+            if !&readonly && !(&buftype == "") && !(&buftype == "nofile") && !(&buftype == "help") && !(&buftype == "terminal") && !(&buftype == "quickfix") && !(&filetype == "harpoon") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) \
                 :%s/\r//ge \
             endif \
         ')
@@ -60,7 +60,7 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufWinLeave" }, {
     desc = "Save buffer when leaving the buffer",
     callback = function()
         vim.cmd(' \
-            if !&readonly && !(&buftype == "nofile") && !(&buftype == "help") && !(&buftype == "terminal") && !(&filetype == "harpoon") && !(&buftype == "quickfix") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) && filereadable(bufname("%")) \
+            if !&readonly && !(&buftype == "") && !(&buftype == "nofile") && !(&buftype == "help") && !(&buftype == "terminal") && !(&filetype == "harpoon") && !(&buftype == "quickfix") && !(&buftype == "prompt") && !isdirectory(expand("%") && (!vim.fn.expand("%") == "")) && filereadable(bufname("%")) \
                 :w! \
             endif \
         ')
