@@ -3,10 +3,12 @@ return {
     dependencies = {
         'rcarriga/nvim-dap-ui',
         "nvim-neotest/nvim-nio", -- required by nvim-dap-ui
+        "ldelossa/nvim-dap-projects",
     },
     config = function()
         local dap = require('dap')
         local dapui = require('dapui')
+        local dapprog = require('nvim-dap-projects')
         -- setup layout
         dapui.setup({
             layouts = { {
@@ -64,7 +66,23 @@ return {
             require("neo-tree.command").execute({ action = "show" })
         end
 
-        -- Setup for Go
+        local sign = vim.fn.sign_define
+
+        -- Setup Signs and Highlights
+        sign("DapBreakpoint", { text = "●", texthl = "DapBreakpointText", linehl = "DapBreakpoint", numhl = "" })
+        sign("DapBreakpointCondition",
+            { text = "●", texthl = "DapBreakpointCondition", linehl = "DapBreakpoint", numhl = "" })
+        -- sign('DapStopped', { text = '', texthl = 'DapStopped', linehl = 'DapStopped', numhl = 'DapStopped' })
+        sign('DapStopped', { text = '', texthl = 'DapStoppedText', linehl = 'DapStopped', numhl = 'DapStopped' })
+
+        vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#ff0000' })
+        vim.api.nvim_set_hl(0, 'DapBreakpointText', { fg = '#ff0000' })
+        vim.api.nvim_set_hl(0, 'DapBreakpoint', { bg = '#b00000' })
+        vim.api.nvim_set_hl(0, 'DapStopped', { bg = '#0B524C' })
+        vim.api.nvim_set_hl(0, 'DapStoppedText', { fg = '#0B524C' })
+
+
+        -- Setup Adapters
         dap.adapters.delve = function(callback, config)
             if config.mode == 'remote' and config.request == 'attach' then
                 callback({
@@ -85,7 +103,7 @@ return {
             end
         end
 
-
+        -- default configurations
         -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
         dap.configurations.go = {
             {
@@ -110,5 +128,10 @@ return {
                 program = "./${relativeFileDirname}"
             }
         }
+
+
+        -- configurations
+        dapprog.config_paths = { "./.dap_config.lua" }
+        dapprog.search_project_config()
     end,
 }
