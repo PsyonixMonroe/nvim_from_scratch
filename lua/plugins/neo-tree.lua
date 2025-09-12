@@ -17,6 +17,9 @@ return {
         close_if_last_window = true,
         enable_diagnostics = false,
         filesystem = {
+            follow_current_file = {
+                enabled = true,
+            },
             filtered_items = {
                 hide_by_name = {
                     ".urc",
@@ -30,7 +33,8 @@ return {
                 },
                 always_show = {
                     ".gitignore",
-                    ".github"
+                    ".github",
+                    ".dap_config.lua"
                 },
             },
             window = {
