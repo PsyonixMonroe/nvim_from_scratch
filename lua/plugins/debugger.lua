@@ -36,11 +36,20 @@ return {
 
         -- keybinds
         vim.keymap.set('n', "<Leader>d", "", { desc = "Debugger" })
-        vim.keymap.set('n', "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
         vim.keymap.set('n', "<Leader>da", dap.clear_breakpoints, { desc = "Clear All Breakpoints" })
         vim.keymap.set('n', "<Leader>dq", dap.terminate, { desc = "Quit Session" })
         vim.keymap.set('n', "<Leader>dc", dap.continue, { desc = "Start Debugging" })
         vim.keymap.set('n', "<Leader>dr", dap.run_to_cursor, { desc = "Run to Cursor" })
+        vim.keymap.set('n', "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+        vim.keymap.set('n', "<Leader>dB", function()
+            local condition = vim.fn.input("Breakpoint Conditional (optional): ")
+            local hit_cond = vim.fn.input("Hit Count (optional): ")
+
+            condition = condition ~= "" and condition or nil
+            hit_cond = hit_cond ~= "" and hit_cond or nil
+
+            dap.toggle_breakpoint(condition, hit_cond)
+        end, { desc = "Toggle Conditional Breakpoint" })
 
 
         vim.keymap.set('n', "<F9>", dap.continue, { desc = "Start Debugging" })
@@ -71,11 +80,12 @@ return {
         -- Setup Signs and Highlights
         sign("DapBreakpoint", { text = "●", texthl = "DapBreakpointText", linehl = "DapBreakpoint", numhl = "" })
         sign("DapBreakpointCondition",
-            { text = "●", texthl = "DapBreakpointCondition", linehl = "DapBreakpoint", numhl = "" })
+            { text = "●", texthl = "DapBreakpointCondition", linehl = "DapBreakpointCondLine", numhl = "" })
         -- sign('DapStopped', { text = '', texthl = 'DapStopped', linehl = 'DapStopped', numhl = 'DapStopped' })
         sign('DapStopped', { text = '', texthl = 'DapStoppedText', linehl = 'DapStopped', numhl = 'DapStopped' })
 
-        vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#ff0000' })
+        vim.api.nvim_set_hl(0, 'DapBreakpointCondLine', { bg = '#88580b' })
+        vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#ff580b' })
         vim.api.nvim_set_hl(0, 'DapBreakpointText', { fg = '#ff0000' })
         vim.api.nvim_set_hl(0, 'DapBreakpoint', { bg = '#b00000' })
         vim.api.nvim_set_hl(0, 'DapStopped', { bg = '#0B524C' })
