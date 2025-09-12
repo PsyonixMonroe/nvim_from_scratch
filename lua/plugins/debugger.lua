@@ -15,34 +15,65 @@ return {
         dapgo.setup()
 
         -- setup layout
+        ---@diagnostic disable-next-line: missing-fields
         dapui.setup({
-            layouts = { {
-                elements = { {
-                    id = "scopes",
-                    size = 0.70
-                }, {
-                    id = "watches",
-                    size = 0.30
-                } },
-                position = "left",
-                size = 40
-            }, {
-                elements = { {
-                    id = "stacks",
-                    size = 0.70
-                }, {
-                    id = "breakpoints",
-                    size = 0.30
-                } },
-                position = "bottom",
-                size = 20
-            } },
+            layouts = {
+                {
+                    elements = {
+                        {
+                            id = "scopes",
+                            size = 0.70,
+                        },
+                        {
+                            id = "watches",
+                            size = 0.15,
+                        },
+                        {
+                            id = "breakpoints",
+                            size = 0.15,
+                        }
+                    },
+                    position = "left",
+                    size = 40
+                },
+                {
+                    elements = {
+                        {
+                            id = "repl",
+                            size = 0.70
+                        },
+                        {
+                            id = "stacks",
+                            size = 0.30
+                        }
+                    },
+                    position = "bottom",
+                    size = 20
+                }
+            }
         })
+
+        -- ui utility functions
+        local close_dap = function()
+            dapui.close()
+            require("neo-tree.command").execute({ action = "show" })
+        end
+        local open_dap = function()
+            require("neo-tree.command").execute({ action = "close" })
+            dapui.open()
+        end
+
 
         -- keybinds
         vim.keymap.set('n', "<Leader>d", "", { desc = "Debugger" })
         vim.keymap.set('n', "<Leader>da", dap.clear_breakpoints, { desc = "Clear All Breakpoints" })
-        vim.keymap.set('n', "<Leader>dq", dap.terminate, { desc = "Quit Session" })
+        vim.keymap.set('n', "<Leader>dq", function()
+            if dap.session() ~= nil then
+                dap.terminate()
+            else
+                close_dap()
+            end
+        end, { desc = "Quit Session" })
         vim.keymap.set('n', "<Leader>dc", dap.continue, { desc = "Start Debugging" })
         vim.keymap.set('n', "<Leader>dr", dap.run_to_cursor, { desc = "Run to Cursor" })
         vim.keymap.set('n', "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
@@ -64,23 +95,10 @@ return {
         vim.keymap.set('n', "<F6>", dap.step_out, { desc = "Step Out" })
 
         -- Auto open/close DAP-UI
-        dap.listeners.before.attach.dapui_config = function()
-            require("neo-tree.command").execute({ action = "close" })
-            dapui.open()
-        end
-        dap.listeners.before.launch.dapui_config = function()
-            require("neo-tree.command").execute({ action = "close" })
-            dapui.open()
-        end
-        dap.listeners.before.event_terminated.dapui_config = function()
-            dapui.close()
-            require("neo-tree.command").execute({ action = "show" })
-        end
-        dap.listeners.before.event_exited.dapui_config = function()
-            dapui.close()
-            require("neo-tree.command").execute({ action = "show" })
-        end
-
+        dap.listeners.before.attach.dapui_config = open_dap
+        dap.listeners.before.launch.dapui_config = open_dap
+        dap.listeners.before.event_terminated.dapui_config = close_dap
+        dap.listeners.before.event_exited.dapui_config = close_dap
         local sign = vim.fn.sign_define
 
         -- Setup Signs and Highlights
@@ -118,36 +136,6 @@ return {
                 })
             end
         end
-
-        -- default configurations
-        -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
-        -- dap.configurations.go = {
-        --     {
-        --         type = "delve",
-        --         name = "Debug",
-        --         request = "launch",
-        --         program = "${file}",
-        --         outputMode = "remote",
-        --     },
-        --     {
-        --         type = "delve",
-        --         name = "Debug test", -- configuration for debugging test files
-        --         request = "launch",
-        --         mode = "test",
-        --         program = "${file}",
-        --         outputMode = "remote",
-        --     },
-        --     -- works with go.mod packages and sub packages
-        --     {
-        --         type = "delve",
-        --         name = "Debug test (go.mod)",
-        --         request = "launch",
-        --         mode = "test",
-        --         program = "./${relativeFileDirname}",
-        --         outputMode = "remote",
-        --     }
-        -- }
-
 
         -- configurations
         dapprog.config_paths = { "./.dap_config.lua" }
