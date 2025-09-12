@@ -43,7 +43,7 @@ return {
             go = { "golangcilint", "nilaway" },
             lua = { "selene" },
             json = { "jsonlint" },
-            php = { "phpstan" },
+            -- php = { "phpstan" },
         }
 
         lint.linters.nilaway = {
