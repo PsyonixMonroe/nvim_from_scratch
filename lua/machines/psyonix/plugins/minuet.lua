@@ -19,7 +19,8 @@ return {
                         model = 'claude-3-5-haiku-latest',
                         stream = true,
                         api_key = 'ANTHROPIC_API_KEY',
-                        end_point = 'https://api.portkey.ai/v1/messages',
+                        end_point = 'https://live.ai.epicgames.com/v1/messages',
+                        -- end_point = 'https://api.portkey.ai/v1/messages',
                     },
                 },
             })
