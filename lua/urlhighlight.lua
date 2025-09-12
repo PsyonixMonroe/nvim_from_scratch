@@ -11,9 +11,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 vim.api.nvim_create_autocmd({ "VimEnter", "FileType", "BufEnter", "WinEnter" }, {
     group = highlighturl_group,
     desc = "Highlight URLs",
-    callback = function(args)
+    callback = function()
         for _, win in ipairs(vim.api.nvim_list_wins()) do
-            set_url_match(win)
+            Set_url_match(win)
         end
     end,
 })
@@ -23,7 +23,7 @@ local url_matcher =
 
 --- Delete the syntax matching rules for URLs/URIs if set
 ---@param win? integer the window id to remove url highlighting in (default: current window)
-function delete_url_match(win)
+function Delete_url_match(win)
     if not win then
         win = vim.api.nvim_get_current_win()
     end
@@ -35,11 +35,11 @@ function delete_url_match(win)
     vim.w[win].highlighturl_enabled = false
 end
 
-function set_url_match(win)
+function Set_url_match(win)
     if not win then
         win = vim.api.nvim_get_current_win()
     end
-    delete_url_match(win)
+    Delete_url_match(win)
     vim.fn.matchadd("HighlightURL", url_matcher, 15, -1, { window = win })
     vim.w[win].highlighturl_enabled = true
 end
