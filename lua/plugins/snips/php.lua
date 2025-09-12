@@ -81,7 +81,7 @@ switch ({})
 
     -- log
     s("log",
-        fmt([[SystemLogger::Log({}, "{}")]],
+        fmt([[SystemLogger::Log({}, "{}");]],
             { c(1, { t("LOG_INFO"), t("LOG_WARNING"), t("LOG_ERR"), t("LOG_DEBUG") }), i(2, "__message__") })),
 
     -- struct/class
