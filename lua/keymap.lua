@@ -176,7 +176,9 @@ vim.keymap.set(
     "Oif err != nil {<CR>}<CR><Esc>kOreturn err<Esc>:lua vim.lsp.buf.format()<CR>_",
     { desc = "Go err block" }
 )
-vim.keymap.set({ "n", "x" }, "<Leader>rt", "", { desc = "Run Test" })
+
+-- create build command and bind to run it
+vim.keymap.set({ "n", "x" }, "<Leader>bb", ":make build<CR>", { desc = "Trigger make" })
 
 -- old plugin commands
 -- vim.keymap.set("n", "<A-.>", ":ToggleTerm<CR>", { desc = "Run Terminal emulator" })
