@@ -4,11 +4,16 @@ return {
         'rcarriga/nvim-dap-ui',
         "nvim-neotest/nvim-nio", -- required by nvim-dap-ui
         "ldelossa/nvim-dap-projects",
+        "leoluz/nvim-dap-go"
     },
     config = function()
         local dap = require('dap')
         local dapui = require('dapui')
         local dapprog = require('nvim-dap-projects')
+        local dapgo = require('dap-go')
+
+        dapgo.setup()
+
         -- setup layout
         dapui.setup({
             layouts = { {
@@ -41,6 +46,7 @@ return {
         vim.keymap.set('n', "<Leader>dc", dap.continue, { desc = "Start Debugging" })
         vim.keymap.set('n', "<Leader>dr", dap.run_to_cursor, { desc = "Run to Cursor" })
         vim.keymap.set('n', "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle Breakpoint" })
+        vim.keymap.set({ 'n', 'x' }, "<Leader>dt", dapgo.debug_test, { desc = "Debug Test (Go)" })
         vim.keymap.set('n', "<Leader>dB", function()
             local condition = vim.fn.input("Breakpoint Conditional (optional): ")
             local hit_cond = vim.fn.input("Hit Count (optional): ")
@@ -115,33 +121,36 @@ return {
 
         -- default configurations
         -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
-        dap.configurations.go = {
-            {
-                type = "delve",
-                name = "Debug",
-                request = "launch",
-                program = "${file}"
-            },
-            {
-                type = "delve",
-                name = "Debug test", -- configuration for debugging test files
-                request = "launch",
-                mode = "test",
-                program = "${file}"
-            },
-            -- works with go.mod packages and sub packages
-            {
-                type = "delve",
-                name = "Debug test (go.mod)",
-                request = "launch",
-                mode = "test",
-                program = "./${relativeFileDirname}"
-            }
-        }
+        -- dap.configurations.go = {
+        --     {
+        --         type = "delve",
+        --         name = "Debug",
+        --         request = "launch",
+        --         program = "${file}",
+        --         outputMode = "remote",
+        --     },
+        --     {
+        --         type = "delve",
+        --         name = "Debug test", -- configuration for debugging test files
+        --         request = "launch",
+        --         mode = "test",
+        --         program = "${file}",
+        --         outputMode = "remote",
+        --     },
+        --     -- works with go.mod packages and sub packages
+        --     {
+        --         type = "delve",
+        --         name = "Debug test (go.mod)",
+        --         request = "launch",
+        --         mode = "test",
+        --         program = "./${relativeFileDirname}",
+        --         outputMode = "remote",
+        --     }
+        -- }
 
 
         -- configurations
         dapprog.config_paths = { "./.dap_config.lua" }
-        dapprog.search_project_config()
+        dapprog.search_project_config({ append = true })
     end,
 }
