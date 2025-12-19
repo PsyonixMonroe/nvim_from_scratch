@@ -156,6 +156,7 @@ vim.keymap.set({ "n", "x" }, "gd", vim.lsp.buf.definition, { desc = "[G] [D]efin
 vim.keymap.set({ "n", "x" }, "<Leader>ld", vim.diagnostic.open_float, { desc = "Open Documenation" })
 vim.keymap.set({ "n", "x" }, "gh", vim.lsp.buf.hover, { desc = "Show Line [H]over" })
 vim.keymap.set({ "n", "x" }, "<Leader>lh", vim.lsp.buf.hover, { desc = "Show Diagnostics" })
+vim.keymap.set({ "n", "x" }, "<Leader>ls", vim.lsp.buf.signature_help, { desc = "Show Signature Help" })
 vim.keymap.set({ "n", "x" }, "gi", vim.lsp.buf.implementation, { desc = "Go To [I]mplementation" })
 vim.keymap.set({ "n", "x" }, "gy", vim.lsp.buf.signature_help, { desc = "Show Signature Help" })
 vim.keymap.set({ "n", "x" }, "ga", vim.lsp.buf.code_action, { desc = "Perform Code Action" })
@@ -164,6 +165,16 @@ vim.keymap.set({ "n", "x" }, "<Leader>ln", function() vim.diagnostic.jump({ coun
     { desc = "Go to next error" })
 vim.keymap.set({ "n", "x" }, "<Leader>lN", function() vim.diagnostic.jump({ count = -1 }) end,
     { desc = "Go to prev error" })
+
+vim.keymap.set({ "n", "x" }, "<Leader>uf", function()
+    if vim.b.autoformat == false then
+        vim.b.autoformat = true
+        vim.notify("Autoformat Enabled")
+    else
+        vim.b.autoformat = false
+        vim.notify("Autoformat Disabled")
+    end
+end, { desc = "Toggle autoformat" })
 -- Rename the variable under your cursor.
 --  Most Language Servers support renaming across files, etc.
 vim.keymap.set({ "n", "x" }, "<leader>lr", vim.lsp.buf.rename, { desc = "[R]ename" })
