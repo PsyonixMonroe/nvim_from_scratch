@@ -66,3 +66,11 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufWinLeave" }, {
         ')
     end,
 })
+
+vim.api.nvim_create_autocmd("TermEnter", {
+    group = augroup,
+    desc = "Save all buffers when entering terminal",
+    callback = function()
+        vim.cmd("wa")
+    end,
+})
