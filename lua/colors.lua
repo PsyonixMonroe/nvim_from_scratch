@@ -1,9 +1,9 @@
 local function set_diff_colors()
     -- Standard diff highlights
-    vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1a4d1a", fg = "#d0d0d0" })            -- Dark green for added lines
-    vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#4d1a1a", fg = "#d0d0d0" })         -- Dark red for deleted lines
-    vim.api.nvim_set_hl(0, "DiffChange", { bg = "#3a3a5a", fg = "#d0d0d0" })         -- Dark blue for changed lines
-    vim.api.nvim_set_hl(0, "DiffText", { bg = "#5a5a7a", fg = "#ffffff", bold = true }) -- Lighter blue for text within change
+    vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1a4d1a", fg = "#d0d0d0" })               -- Dark green for added lines
+    vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#4d1a1a", fg = "#d0d0d0" })            -- Dark red for deleted lines
+    vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2d4f7c", fg = "#d0d0d0" })            -- Medium blue for changed lines
+    vim.api.nvim_set_hl(0, "DiffText", { bg = "#5c9fd6", fg = "#ffffff", bold = true }) -- Light blue for text within change
 
     -- Git diff syntax highlights
     vim.api.nvim_set_hl(0, "diffAdded", { bg = "#1a4d1a", fg = "#d0d0d0" })
