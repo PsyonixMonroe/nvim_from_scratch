@@ -1,0 +1,33 @@
+return {
+    'greggh/claude-code.nvim',
+    enabled = false,
+    requires = {
+        'nvim-lua/plenary.nvim', -- Required for git operations
+    },
+    config = function()
+        require("claude-code").setup({
+            window = {
+                position = "vertical",
+            },
+            command = 'opencode',
+            keymaps = {
+                toggle = {
+                    normal = "<A-.>",
+                    terminal = "<A-.>",
+                    variants = {
+                        continue = "<A-a>___",
+                        verbose = "<A-a>__",
+                    },
+                },
+                window_navigation = false,
+                scrolling = false,
+            },
+        })
+        vim.keymap.set(
+            't',
+            '<A-h>',
+            [[<C-\><C-n><C-w>h:lua require("claude-code").force_insert_mode()<CR>]],
+            { noremap = true, silent = true, desc = 'Window: move left' }
+        )
+    end
+}
