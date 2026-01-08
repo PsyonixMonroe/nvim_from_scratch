@@ -71,6 +71,16 @@ vim.api.nvim_create_autocmd("TermEnter", {
     group = augroup,
     desc = "Save all buffers when entering terminal",
     callback = function()
-        vim.cmd("wa")
+        -- Only save normal file buffers, skip special buffers
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_option(buf, 'modifiable') then
+                local buftype = vim.api.nvim_buf_get_option(buf, 'buftype')
+                local bufname = vim.api.nvim_buf_get_name(buf)
+                -- Only save normal file buffers (empty buftype)
+                if buftype == '' and bufname ~= '' and not vim.bo[buf].readonly then
+                    pcall(vim.cmd, 'silent! update ' .. vim.fn.fnameescape(bufname))
+                end
+            end
+        end
     end,
 })
