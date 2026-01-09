@@ -7,6 +7,13 @@ local function tsstatus()
     end
 end
 
+local function location_with_total()
+    local line = vim.fn.line('.')
+    local col = vim.fn.col('.')
+    local total = vim.fn.line('$')
+    return string.format('%d:%d | %d', line, col, total)
+end
+
 return {
     "nvim-lualine/lualine.nvim",
     requires = { 'nvim-tree/nvim-web-devicons', opt = true },
@@ -24,7 +31,7 @@ return {
             lualine_c = { 'filename', 'searchcount', },
             lualine_x = { 'encoding', 'bo:filetype', tsstatus, { 'lsp_status', icon = '', symbols = { done = '', separator = ',' } } },
             lualine_y = { 'progress' },
-            lualine_z = { 'location' },
+            lualine_z = { location_with_total },
         },
     },
 }
