@@ -55,14 +55,6 @@ return {
                     local buf1 = vim.api.nvim_win_get_buf(win1)
                     local buf2 = vim.api.nvim_win_get_buf(win2)
 
-                    -- Save the view (scroll position, cursor) from proposed window only
-                    -- The original window scroll position should be set by the diff itself
-                    local view2
-                    pcall(function()
-                        vim.api.nvim_set_current_win(win2)
-                        view2 = vim.fn.winsaveview()
-                    end)
-
                     -- Close the diff windows FIRST before checking for restoration
                     pcall(vim.api.nvim_win_close, win1, true)
                     pcall(vim.api.nvim_win_close, win2, true)
@@ -195,7 +187,7 @@ return {
                         })
                         vim.wo[float_win_right].diff = true
 
-                        -- Sync diff scroll positions
+                        -- Sync diff scroll positions and jump to first change
                         vim.schedule(function()
                             -- Set scrollbind on both windows without changing focus
                             vim.wo[float_win_left].scrollbind = true
@@ -203,11 +195,14 @@ return {
                             vim.wo[float_win_right].scrollbind = true
                             vim.wo[float_win_right].cursorbind = true
 
-                            -- Restore the saved view (scroll position) in proposed window
-                            if view2 then
-                                vim.api.nvim_set_current_win(float_win_right)
-                                vim.fn.winrestview(view2)
-                            end
+                            -- Jump to first diff change in the proposed window
+                            vim.api.nvim_set_current_win(float_win_right)
+                            vim.cmd("diffupdate")
+                            -- Go to top first, then find first change
+                            vim.cmd("normal! gg")
+                            -- Use pcall since ]c fails if no diffs exist
+                            pcall(vim.cmd, "normal! ]c")
+
                             -- Initial sync of scroll positions
                             vim.cmd("syncbind")
                         end)
