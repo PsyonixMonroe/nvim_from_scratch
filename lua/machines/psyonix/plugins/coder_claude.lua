@@ -279,28 +279,26 @@ return {
                                     end
                                 end
 
-                                -- Return to original window (but avoid terminal windows)
-                                if original_win and vim.api.nvim_win_is_valid(original_win) then
-                                    local buf = vim.api.nvim_win_get_buf(original_win)
-                                    if vim.api.nvim_buf_is_valid(buf) then
-                                        local buftype = vim.api.nvim_buf_get_option(buf, 'buftype')
-                                        -- Only restore focus if it's not a terminal
-                                        if buftype ~= 'terminal' then
-                                            pcall(vim.api.nvim_set_current_win, original_win)
-                                        else
-                                            -- Find a non-terminal window to focus
-                                            for _, saved in ipairs(saved_windows) do
-                                                if vim.api.nvim_win_is_valid(saved.win) then
-                                                    local saved_buf = vim.api.nvim_win_get_buf(saved.win)
-                                                    local saved_buftype = vim.api.nvim_buf_get_option(saved_buf, 'buftype')
-                                                    if saved_buftype ~= 'terminal' then
-                                                        pcall(vim.api.nvim_set_current_win, saved.win)
-                                                        break
-                                                    end
-                                                end
+                                -- Focus the Claude Code terminal window
+                                local found_terminal = false
+                                for _, win in ipairs(vim.api.nvim_list_wins()) do
+                                    if vim.api.nvim_win_is_valid(win) then
+                                        local buf = vim.api.nvim_win_get_buf(win)
+                                        if vim.api.nvim_buf_is_valid(buf) then
+                                            local buftype = vim.api.nvim_buf_get_option(buf, 'buftype')
+                                            if buftype == 'terminal' then
+                                                pcall(vim.api.nvim_set_current_win, win)
+                                                -- Enter insert mode to interact with terminal
+                                                vim.cmd("startinsert")
+                                                found_terminal = true
+                                                break
                                             end
                                         end
                                     end
+                                end
+                                -- Fallback to original window if no terminal found
+                                if not found_terminal and original_win and vim.api.nvim_win_is_valid(original_win) then
+                                    pcall(vim.api.nvim_set_current_win, original_win)
                                 end
 
                                 -- Force comprehensive redraw to fix rendering issues
