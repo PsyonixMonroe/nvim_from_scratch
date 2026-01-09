@@ -126,9 +126,41 @@ return {
                         -- Now create the floating diff windows after layout is restored
                         -- Calculate dimensions for side-by-side floating windows
                         local total_width = math.floor(vim.o.columns * 0.9)
-                        local height = math.floor(vim.o.lines * 0.85)
-                        local row = math.floor((vim.o.lines - height) / 2)
+                        local diff_height = math.floor(vim.o.lines * 0.85) - 2 -- Reserve space for header
                         local col_start = math.floor((vim.o.columns - total_width) / 2)
+
+                        -- Calculate relative file path for display
+                        local display_path = old_file_path
+                        if display_path then
+                            display_path = vim.fn.fnamemodify(display_path, ':.')
+                        else
+                            display_path = "[New File]"
+                        end
+
+                        -- Create header buffer with centered filename
+                        local header_buf = vim.api.nvim_create_buf(false, true)
+                        local header_width = total_width + 2 -- Account for center gap
+                        local padding = math.floor((header_width - #display_path) / 2)
+                        local centered_text = string.rep(" ", math.max(0, padding)) .. display_path
+                        vim.api.nvim_buf_set_lines(header_buf, 0, -1, false, { centered_text })
+                        vim.api.nvim_buf_set_option(header_buf, 'modifiable', false)
+                        vim.api.nvim_buf_set_option(header_buf, 'bufhidden', 'wipe')
+
+                        -- Create header window
+                        local header_row = math.floor((vim.o.lines - diff_height - 3) / 2)
+                        local float_win_header = vim.api.nvim_open_win(header_buf, false, {
+                            relative = 'editor',
+                            row = header_row,
+                            col = col_start,
+                            width = header_width,
+                            height = 1,
+                            style = 'minimal',
+                            border = 'rounded',
+                        })
+                        vim.wo[float_win_header].cursorline = false
+
+                        -- Position diff windows below header
+                        local diff_row = header_row + 3 -- Header height + border
 
                         -- Divide width exactly in half for equal sizing
                         local half_width = math.floor(total_width / 2)
@@ -138,10 +170,10 @@ return {
                         -- Create first window (left side - original)
                         local float_win_left = vim.api.nvim_open_win(buf1, false, {
                             relative = 'editor',
-                            row = row,
+                            row = diff_row,
                             col = col_start,
                             width = half_width,
-                            height = height,
+                            height = diff_height,
                             style = 'minimal',
                             border = 'rounded',
                             title = ' Original ',
@@ -152,10 +184,10 @@ return {
                         -- Create second window (right side - proposed) with center gap
                         local float_win_right = vim.api.nvim_open_win(buf2, true, {
                             relative = 'editor',
-                            row = row,
+                            row = diff_row,
                             col = col_start + half_width + center_gap,
                             width = half_width,
-                            height = height,
+                            height = diff_height,
                             style = 'minimal',
                             border = 'rounded',
                             title = ' Proposed ',
@@ -222,7 +254,10 @@ return {
 
                         -- Helper function to close floating windows and restore focus
                         local function cleanup_floating_windows()
-                            -- Close our diff floating windows
+                            -- Close our diff floating windows and header
+                            if vim.api.nvim_win_is_valid(float_win_header) then
+                                pcall(vim.api.nvim_win_close, float_win_header, true)
+                            end
                             if vim.api.nvim_win_is_valid(float_win_left) then
                                 pcall(vim.api.nvim_win_close, float_win_left, true)
                             end
