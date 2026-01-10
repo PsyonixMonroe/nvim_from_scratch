@@ -1,11 +1,11 @@
 return {
-	"NickvanDyke/opencode.nvim",
-	enabled = false,
-	dependencies = { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
-	config = function()
-		vim.g.opencode_opts = {}
-		vim.o.autoread = true
-	end,
+    "NickvanDyke/opencode.nvim",
+    enabled = true,
+    dependencies = { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
+    config = function()
+        vim.g.opencode_opts = {}
+        vim.o.autoread = true
+    end,
     -- stylua: ignore
     keys = {
         { '<A-.>',      function() require('opencode').toggle() end,                           desc = 'Toggle embedded opencode', },

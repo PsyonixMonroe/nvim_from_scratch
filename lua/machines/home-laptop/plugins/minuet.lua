@@ -35,7 +35,7 @@ return {
             vim.keymap.set({ "i" }, '<A-p>', minuetAction.dismiss, { desc = "Dismiss LLM Virtualtext" })
 
             vim.keymap.set({ "n" }, '<A-a>t', minuetAction.toggle_auto_trigger, { desc = "Toggle AI Virtualtext" })
-            minuetAction.enable_auto_trigger()
+            -- minuetAction.enable_auto_trigger()
         end,
     }
 }
