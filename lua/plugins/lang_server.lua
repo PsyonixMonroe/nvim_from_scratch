@@ -8,6 +8,8 @@ return {
         opts = {
             ensure_installed = {
                 "selene",
+                "golangci-lint",
+                "nilaway",
             }
         }
     },
