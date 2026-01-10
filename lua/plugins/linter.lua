@@ -54,7 +54,7 @@ return {
             name = "nilaway",
             cmd = "nilaway",
             stdin = false,
-            append_fname = true,
+            append_fname = false,
             args = { "-json", "-pretty-print=false" },
             stream = "stdout",
             parser = function(output, bufnr)
@@ -69,14 +69,22 @@ return {
                     return {}
                 end
 
-                if type(decoded) ~= 'table' or
-                   decoded['command-line-arguments'] == nil or
-                   decoded['command-line-arguments']['nilaway'] == nil then
+                if type(decoded) ~= 'table' then
                     return {}
                 end
 
+                -- Collect all nilaway results from any package key
+                local all_items = {}
+                for _, pkg_data in pairs(decoded) do
+                    if type(pkg_data) == 'table' and pkg_data['nilaway'] then
+                        for _, item in ipairs(pkg_data['nilaway']) do
+                            table.insert(all_items, item)
+                        end
+                    end
+                end
+
                 local diagnostics = {}
-                for _, item in ipairs(decoded['command-line-arguments']['nilaway']) do
+                for _, item in ipairs(all_items) do
                     -- Safely handle item parsing
                     if type(item) ~= 'table' or not item["posn"] or not item["message"] then
                         goto continue
@@ -136,15 +144,28 @@ return {
             end,
         }
 
+        -- Custom try_lint that sets nilaway args dynamically
+        local function try_lint_with_nilaway()
+            local ft = vim.bo.filetype
+            if ft == "go" then
+                -- Set nilaway args to use package path for current file's directory
+                local file = vim.api.nvim_buf_get_name(0)
+                local dir = vim.fn.fnamemodify(file, ":h")
+                local pkg_path = "./" .. vim.fn.fnamemodify(dir, ":.")
+                lint.linters.nilaway.args = { "-json", "-pretty-print=false", pkg_path }
+            end
+            lint.try_lint()
+        end
+
         local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
         vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
             group = lint_augroup,
             callback = function()
-                lint.try_lint()
+                try_lint_with_nilaway()
             end,
         })
 
-        vim.keymap.set("n", "<leader>ll", lint.try_lint, { desc = "Trigger Linting" })
+        vim.keymap.set("n", "<leader>ll", try_lint_with_nilaway, { desc = "Trigger Linting" })
     end,
 }
