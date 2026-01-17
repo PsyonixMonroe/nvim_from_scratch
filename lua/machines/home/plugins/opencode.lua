@@ -13,7 +13,7 @@ return {
                 snacks = {
                     win = {
                         enter = true,
-                        width = math.floor(vim.o.columns * 0.3)
+                        width = math.floor(vim.o.columns * 0.4)
                     }
                 },
             }
