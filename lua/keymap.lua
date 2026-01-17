@@ -84,6 +84,8 @@ vim.keymap.set("n", "<Leader>fs", function()
     tsbuiltin.grep_string({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep for string in files" })
 -- vim.keymap.set("n", "<leader>fs", tsbuiltin.live_grep, { desc = "[S]earch by Grep" })
+vim.keymap.set({ "n", "x" }, "<leader>fn", telescope.extensions.notify.notify,
+    { desc = "Search Notifications" })
 
 
 vim.keymap.set("n", "<leader>fh", tsbuiltin.help_tags, { desc = "Search [H]elp" })
@@ -178,8 +180,6 @@ end, { desc = "Toggle autoformat" })
 -- Rename the variable under your cursor.
 --  Most Language Servers support renaming across files, etc.
 vim.keymap.set({ "n", "x" }, "<leader>lr", vim.lsp.buf.rename, { desc = "[R]ename" })
-vim.keymap.set({ "n", "x" }, "<leader>sn", telescope.extensions.notify.notify,
-    { desc = "Search Notifications" })
 
 vim.keymap.set(
     "n",
