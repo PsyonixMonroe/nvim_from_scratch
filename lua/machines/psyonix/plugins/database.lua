@@ -9,6 +9,7 @@ return {
         'DBUIAddConnection',
         'DBUIFindBuffer',
     },
+    enabled = true,
     init = function()
         -- get mysql password from vault
         local get_secret_value = function()
