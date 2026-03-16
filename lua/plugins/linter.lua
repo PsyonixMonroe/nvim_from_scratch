@@ -47,6 +47,7 @@ return {
             go = { "golangcilint", "nilaway" },
             lua = { "selene" },
             json = { "jsonlint" },
+            java = { "checkstyle" },
             -- php = { "phpstan" },
         }
 

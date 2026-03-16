@@ -1,7 +1,16 @@
 return {
     {
         "neovim/nvim-lspconfig",
-        -- opts = {}
+        config = function()
+            -- Guard against servers sending nil registrations (jdtls)
+            local orig = vim.lsp.handlers["client/registerCapability"]
+            vim.lsp.handlers["client/registerCapability"] = function(err, params, ctx)
+                if not params or not params.registrations then
+                    return vim.NIL
+                end
+                return orig(err, params, ctx)
+            end
+        end,
     },
     {
         "mason-org/mason.nvim",
@@ -10,6 +19,8 @@ return {
                 "selene",
                 "golangci-lint",
                 "nilaway",
+                "checkstyle",
+                "google-java-format",
             }
         }
     },
@@ -26,7 +37,7 @@ return {
                 "gopls",
                 "helm_ls",
                 "html",
-                "java_language_server",
+                "jdtls",
                 "jsonls",
                 "lua_ls",
                 "phpactor",
@@ -45,7 +56,8 @@ return {
                     server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
                     require("lspconfig")[server_name].setup(server)
                     vim.diagnostic.config({ virtual_text = false, })
-                end
+                end,
+                ["java_language_server"] = function() end,
             }
         }
     }
