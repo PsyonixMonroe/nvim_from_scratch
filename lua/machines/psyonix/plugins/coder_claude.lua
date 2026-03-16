@@ -5,7 +5,7 @@ return {
     },
     config = function()
         require("claudecode").setup({
-            terminal_cmd = 'claude-gateway',
+            terminal_cmd = 'claude',
             diff_opts = {
                 layout = "vertical",
             },
@@ -229,7 +229,8 @@ return {
 
                                 -- Check if one of our diff windows scrolled
                                 if scrolled_win == float_win_left or scrolled_win == float_win_right then
-                                    local other_win = (scrolled_win == float_win_left) and float_win_right or float_win_left
+                                    local other_win = (scrolled_win == float_win_left) and float_win_right or
+                                        float_win_left
 
                                     if not vim.api.nvim_win_is_valid(scrolled_win) or not vim.api.nvim_win_is_valid(other_win) then
                                         return
