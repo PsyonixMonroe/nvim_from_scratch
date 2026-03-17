@@ -12,14 +12,38 @@ return {
                     },
                 },
             },
-            provider = {
-                snacks = {
+            server = (function()
+                local cmd = "opencode --port"
+                ---@type snacks.terminal.Opts
+                local terminal_opts = {
                     win = {
+                        position = "right",
                         enter = true,
-                        width = math.floor(vim.o.columns * 0.4)
-                    }
-                },
-            }
+                        width = math.floor(vim.o.columns * 0.4),
+                        on_win = function(win)
+                            require("opencode.terminal").setup(win.win)
+                            local buf = vim.api.nvim_win_get_buf(win.win)
+                            vim.keymap.set("t", "<A-h>", [[<C-\><C-n><C-w>h]], {
+                                buffer = buf,
+                                noremap = true,
+                                silent = true,
+                                desc = "Window: move left",
+                            })
+                        end,
+                    },
+                }
+                return {
+                    start = function()
+                        require("snacks.terminal").open(cmd, terminal_opts)
+                    end,
+                    stop = function()
+                        require("snacks.terminal").get(cmd, terminal_opts):close()
+                    end,
+                    toggle = function()
+                        require("snacks.terminal").toggle(cmd, terminal_opts)
+                    end,
+                }
+            end)()
         }
         vim.o.autoread = true
 
