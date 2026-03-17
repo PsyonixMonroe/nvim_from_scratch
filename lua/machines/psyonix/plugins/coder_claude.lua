@@ -3,6 +3,7 @@ return {
     dependencies = {
         "folke/snacks.nvim",
     },
+    enabled = false,
     config = function()
         require("claudecode").setup({
             terminal_cmd = 'claude',
