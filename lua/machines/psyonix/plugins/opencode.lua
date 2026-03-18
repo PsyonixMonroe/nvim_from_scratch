@@ -6,7 +6,7 @@ return {
         vim.g.opencode_opts = {
             events = {
                 permissions = {
-                    enabled = true,
+                    enabled = false,
                     edits = {
                         enabled = false, -- Replaced by floating diff below
                     },
