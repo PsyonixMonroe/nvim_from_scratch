@@ -12,8 +12,11 @@ return {
                     },
                 },
             },
-            server = (function()
+             server = (function()
                 local cmd = "opencode --port"
+                local terminal_pid = nil
+                local terminal_buf = nil
+
                 ---@type snacks.terminal.Opts
                 local terminal_opts = {
                     win = {
@@ -21,8 +24,9 @@ return {
                         enter = true,
                         width = math.floor(vim.o.columns * 0.4),
                         on_win = function(win)
-                            require("opencode.terminal").setup(win.win)
                             local buf = vim.api.nvim_win_get_buf(win.win)
+                            terminal_buf = buf
+                            require("opencode.terminal").setup(win.win)
                             vim.keymap.set("t", "<A-h>", [[<C-\><C-n><C-w>h]], {
                                 buffer = buf,
                                 noremap = true,
@@ -32,15 +36,116 @@ return {
                         end,
                     },
                 }
+
+                --- Cache the terminal PID from the buffer's job.
+                --- Must be called after jobstart (not in on_win, which fires before).
+                local function cache_terminal_pid()
+                    if terminal_pid then return end
+                    if not terminal_buf then return end
+                    local job_id = vim.b[terminal_buf]
+                        and vim.b[terminal_buf].terminal_job_id
+                    if not job_id then return end
+                    local ok, pid = pcall(vim.fn.jobpid, job_id)
+                    if ok and pid then terminal_pid = pid end
+                end
+
+                local function terminate_opencode()
+                    if not terminal_pid then return end
+                    -- Negative PID terminates entire process group
+                    os.execute("kill -TERM -" .. terminal_pid .. " 2>/dev/null")
+                    terminal_pid = nil
+                end
+
+                vim.api.nvim_create_autocmd("ExitPre", {
+                    once = true,
+                    callback = terminate_opencode,
+                })
+
+                --- Find the listening port for a PID or its descendants.
+                ---@param pid integer
+                ---@return number|nil
+                local function find_listening_port(pid)
+                    -- Collect this PID + all descendants
+                    local pids = { tostring(pid) }
+                    local pgrep = vim.system(
+                        { "pgrep", "-P", tostring(pid) }, { text = true }):wait()
+                    if pgrep.code == 0 and pgrep.stdout then
+                        for _, p in ipairs(vim.split(pgrep.stdout, "\n", { trimempty = true })) do
+                            table.insert(pids, p)
+                            -- One more level deep for shell -> bun -> opencode
+                            local pgrep2 = vim.system(
+                                { "pgrep", "-P", p }, { text = true }):wait()
+                            if pgrep2.code == 0 and pgrep2.stdout then
+                                for _, p2 in ipairs(vim.split(pgrep2.stdout, "\n", { trimempty = true })) do
+                                    table.insert(pids, p2)
+                                end
+                            end
+                        end
+                    end
+                    local lsof = vim.system({
+                        "lsof", "-Fpn", "-w", "-iTCP", "-sTCP:LISTEN",
+                        "-p", table.concat(pids, ","), "-a", "-P", "-n",
+                    }, { text = true }):wait()
+                    if lsof.code == 0 and lsof.stdout then
+                        for line in lsof.stdout:gmatch("[^\n]+") do
+                            if line:sub(1, 1) == "n" then
+                                local port = tonumber(line:match(":(%d+)$"))
+                                if port then return port end
+                            end
+                        end
+                    end
+                    return nil
+                end
+
+                local function connect_to_server()
+                    if require("opencode.events").connected_server then return end
+                    local function try_connect()
+                        if require("opencode.events").connected_server then return end
+                        cache_terminal_pid()
+                        if not terminal_pid then return end
+                        local port = find_listening_port(terminal_pid)
+                        if not port then return end
+                        -- Build server object and connect to SSE events
+                        require("opencode.cli.client").get_path(port, function(path)
+                            local cwd = path.directory or path.worktree
+                            if not cwd then return end
+                            require("opencode.cli.client").get_agents(port, function(agents)
+                                local subagents = vim.tbl_filter(
+                                    function(a) return a.mode == "subagent" end, agents)
+                                require("opencode.cli.client").get_sessions(port, function(sessions)
+                                    local title = sessions[1] and sessions[1].title
+                                        or "<No sessions>"
+                                    require("opencode.cli.client").get_commands(port, function(cmds)
+                                        if require("opencode.events").connected_server then
+                                            return
+                                        end
+                                        require("opencode.events").connect({
+                                            port = port,
+                                            cwd = cwd,
+                                            title = title,
+                                            subagents = subagents,
+                                            custom_commands = cmds,
+                                        })
+                                    end)
+                                end)
+                            end)
+                        end, function() end)
+                    end
+                    vim.defer_fn(try_connect, 2000)
+                    vim.defer_fn(try_connect, 5000)
+                end
                 return {
                     start = function()
                         require("snacks.terminal").open(cmd, terminal_opts)
+                        connect_to_server()
                     end,
                     stop = function()
+                        terminate_opencode()
                         require("snacks.terminal").get(cmd, terminal_opts):close()
                     end,
                     toggle = function()
                         require("snacks.terminal").toggle(cmd, terminal_opts)
+                        connect_to_server()
                     end,
                 }
             end)()
@@ -96,6 +201,75 @@ return {
             end)
         end
 
+        --- Apply a unified diff to source lines, returning the patched result.
+        --- Parses hunks from the diff text and applies insertions/deletions.
+        ---@param orig_lines string[]
+        ---@param diff_text string
+        ---@return string[]|nil patched_lines
+        local function apply_unified_diff(orig_lines, diff_text)
+            local diff_lines = vim.split(diff_text, '\n')
+            local result = {}
+            local orig_idx = 1
+
+            local i = 1
+            -- Skip header lines (---, +++, diff, index, etc.) until first hunk
+            while i <= #diff_lines do
+                if diff_lines[i]:match('^@@') then break end
+                i = i + 1
+            end
+
+            while i <= #diff_lines do
+                local line = diff_lines[i]
+                local hunk_header = line:match('^@@%s+%-(%d+)')
+                if not hunk_header then
+                    i = i + 1
+                    goto continue
+                end
+
+                local hunk_start = tonumber(hunk_header)
+                -- Copy unchanged lines before this hunk
+                while orig_idx < hunk_start do
+                    table.insert(result, orig_lines[orig_idx])
+                    orig_idx = orig_idx + 1
+                end
+
+                i = i + 1
+                while i <= #diff_lines do
+                    line = diff_lines[i]
+                    if line:match('^@@') or line:match('^diff ') then break end
+                    local prefix = line:sub(1, 1)
+                    local content = line:sub(2)
+                    if prefix == '-' then
+                        -- Skip removed line from original
+                        orig_idx = orig_idx + 1
+                    elseif prefix == '+' then
+                        -- Add new line
+                        table.insert(result, content)
+                    elseif prefix == ' ' then
+                        -- Context line
+                        table.insert(result, content)
+                        orig_idx = orig_idx + 1
+                    elseif line == '\\ No newline at end of file' then
+                        -- skip
+                    else
+                        -- Unknown prefix, treat as context
+                        table.insert(result, line)
+                        orig_idx = orig_idx + 1
+                    end
+                    i = i + 1
+                end
+                ::continue::
+            end
+
+            -- Copy remaining original lines after last hunk
+            while orig_idx <= #orig_lines do
+                table.insert(result, orig_lines[orig_idx])
+                orig_idx = orig_idx + 1
+            end
+
+            return result
+        end
+
         local function create_floating_diff(event, port)
             -- Clean up any previous diff
             if float_state then cleanup_floating_diff() end
@@ -128,20 +302,8 @@ return {
                 orig_lines = vim.fn.readfile(filepath)
             end
 
-            -- Apply patch to produce proposed content
-            local orig_tmp = vim.fn.tempname()
-            local patch_tmp = vim.fn.tempname() .. '.patch'
-            local patched_tmp = vim.fn.tempname()
-            vim.fn.writefile(orig_lines, orig_tmp)
-            vim.fn.writefile(vim.split(diff_text, '\n'), patch_tmp)
-            vim.fn.system(string.format('patch --quiet -o %s %s %s 2>/dev/null',
-                vim.fn.shellescape(patched_tmp),
-                vim.fn.shellescape(orig_tmp),
-                vim.fn.shellescape(patch_tmp)))
-            local proposed_lines = vim.fn.readfile(patched_tmp)
-            vim.fn.delete(orig_tmp)
-            vim.fn.delete(patch_tmp)
-            vim.fn.delete(patched_tmp)
+            -- Apply unified diff in pure Lua (avoids external `patch` command issues)
+            local proposed_lines = apply_unified_diff(orig_lines, diff_text)
 
             if not proposed_lines or #proposed_lines == 0 then
                 vim.notify("Failed to apply patch for floating diff", vim.log.levels.ERROR, { title = "opencode" })
@@ -319,7 +481,10 @@ return {
                 local port = args.data.port
 
                 if event.type == "permission.asked" and event.properties.permission == "edit" then
-                    create_floating_diff(event, port)
+                    -- Delay until user is idle to avoid issues with terminal focus
+                    require("opencode.util").on_user_idle(500, function()
+                        create_floating_diff(event, port)
+                    end)
                 elseif event.type == "permission.replied"
                     and current_edit_request_id
                     and event.properties.requestID == current_edit_request_id then
